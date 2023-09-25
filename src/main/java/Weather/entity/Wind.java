@@ -14,5 +14,6 @@ public class Wind {
     @Data
     public static class WindHourly {
         private double[] windspeed_10m;
+        private int[] weathercode;
     }
 }

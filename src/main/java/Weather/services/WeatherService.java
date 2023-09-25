@@ -1,171 +1,240 @@
 package Weather.services;
 
+import Weather.dto.DayHourlyDto;
 import Weather.entity.*;
-import com.google.gson.Gson;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class WeatherService {
-    //Summart
-    // https://api.open-meteo.com/v1/forecast?latitude=41.38&longitude=2.16&current_weather=true
-
-    //Weathercode + temperature + sunrise + sunset
-    //https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,windspeed_10m_max&current_weather=true&start_date=2023-09-24&end_date=2023-09-24
-
-    //Wave height
-    //https://marine-api.open-meteo.com/v1/marine?latitude=41.3888&longitude=2.159&hourly=wave_height&start_date=2023-09-23&end_date=2023-09-28
-
-    private final String URL_WEATHER_CURRENT_WEAK = "https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,windspeed_10m_max&current_weather=true&" +
-            "start_date=" + firstDayCurrentWeek() + "&" +
-            "end_date=" + lastDayCurrentWeek();
-
-    private final String URL_WAVE_CURRENT_WEEK = "https://marine-api.open-meteo.com/v1/marine?latitude=41.3888&longitude=2.159&hourly=wave_height&" +
-            "start_date=" + firstDayCurrentWeek() + "&" +
-            "end_date=" + lastDayCurrentWeek();
-
-    private final String URL_WIND_CURRENT_WEEK = "https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&hourly=windspeed_10m&current_weather=true&" +
-            "start_date="  + firstDayCurrentWeek() + "&" +
-            "end_date="  + lastDayCurrentWeek();
-
-    private final String URL = "https://api.open-meteo.com/v1/forecast?latitude=41.38&longitude=2.16&current_weather=true";
-
     private RestTemplate restTemplate;
     private WebClient webClient;
-
     public WeatherService(RestTemplate restTemplate, WebClient webClient) {
         this.restTemplate = restTemplate;
         this.webClient = WebClient.builder().build();
     }
 
-    public CompleteResponse getWeather() {
-        try{
-            URI uri = new URI(URL_WEATHER_CURRENT_WEAK);
 
-            HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(uri)
-                    .GET()
-                    .build();
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+    //Summary weather data
+    // https://api.open-meteo.com/v1/forecast?latitude=41.38&longitude=2.16&current_weather=true
 
-            System.out.println(response.body());
-            Gson gson = new Gson();
-            CompleteResponse completeResponse = gson.fromJson(response.body(), CompleteResponse.class);
-            System.out.println(URL_WEATHER_CURRENT_WEAK);
-            System.out.println(URL_WAVE_CURRENT_WEEK);
+    //Current week
+    private final String URL_WAVE_CURRENT_WEEK = "https://marine-api.open-meteo.com/v1/marine?latitude=41.3888&longitude=2.159&hourly=wave_height&" +
+            "start_date=" + firstDayCurrentWeek() + "&" +
+            "end_date=" + lastDayCurrentWeek();
+    private final String URL_WIND_CURRENT_WEEK = "https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&hourly=weathercode,windspeed_10m&current_weather=true&" +
+            "start_date="  + firstDayCurrentWeek() + "&" +
+            "end_date="  + lastDayCurrentWeek();
 
-            return completeResponse;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
+    //Next week
+    private final String URL_WAVE_NEXT_WEEK = "https://marine-api.open-meteo.com/v1/marine?latitude=41.3888&longitude=2.159&hourly=wave_height&" +
+            "start_date="   +   firstDayNextWeek() + "&" +
+            "end_date="     +   lastDayNextWeek();
+    private final String URL_WIND_NEXT_WEEK = "https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&hourly=weathercode,windspeed_10m&current_weather=true&" +
+            "start_date="   +   firstDayNextWeek() + "&" +
+            "end_date="     +   lastDayNextWeek();
 
-    public List<Day> getWeather2() {
-        ResponseEntity<WeatherDaily> weather = restTemplate.getForEntity(URL_WEATHER_CURRENT_WEAK, WeatherDaily.class);
-        ResponseEntity<Wave> waves = restTemplate.getForEntity(URL_WAVE_CURRENT_WEEK, Wave.class);
 
-        WeatherDaily weatherResp = weather.getBody();
-        Wave waveResp = waves.getBody();
 
-        Day day ;
-        Week week = new Week();
-        for(int i = 0; i < weatherResp.getDaily().getTime().length; i++){
-            day= new Day(
-                    weatherResp.getDaily().getTime()[i],
-                    weatherResp.getDaily().getWeathercode()[i],
-                    weatherResp.getDaily().getWindspeed_10m_max()[i],
-                    splitArrayUsingStreams(waveResp.getHourly().getWave_height(),i)) ;
 
-            week.addDay(day);
-        }
-
-        System.out.println(weatherResp);
-        System.out.println(URL_WEATHER_CURRENT_WEAK);
-
-        List<Day> daysList = week.getDays().stream()
-                .filter(days -> days.getWave_height() < 0.6)
-                .filter(wind -> wind.getWindspeed_10m_max() > 10 && wind.getWindspeed_10m_max() < 17)
-                .sorted(Comparator.comparing(Day::getWave_height))
-                .collect(Collectors.toList());
-        return daysList;
-    }
-    public List<DayHourly> getWeather4() {
+    public List<DayHourlyDto> bestDaysCurrentWeek() {
         ResponseEntity<Wave> waves = restTemplate.getForEntity(URL_WAVE_CURRENT_WEEK, Wave.class);
         ResponseEntity<Wind> wind = restTemplate.getForEntity(URL_WIND_CURRENT_WEEK, Wind.class);
+        return daysListFilterLogic(waves, wind);
+    }
+    public List<DayHourlyDto> bestDaysNextWeek() {
+        ResponseEntity<Wave> waves = restTemplate.getForEntity(URL_WAVE_NEXT_WEEK, Wave.class);
+        ResponseEntity<Wind> wind = restTemplate.getForEntity(URL_WIND_NEXT_WEEK, Wind.class);
+        return daysListFilterLogic(waves, wind);
+    }
 
+
+    public List<DayHourlyDto> daysListFilterLogic(ResponseEntity<Wave> waves, ResponseEntity<Wind> wind) {
         Wave waveResp = waves.getBody();
         Wind windResp = wind.getBody();
 
-        DayHourly day ;
-        List<DayHourly> week = new ArrayList<DayHourly>();
+        DayHourlyDto day ;
+        List<DayHourlyDto> week = new ArrayList<DayHourlyDto>();
         for(int i = 0; i < waveResp.getHourly().getTime().length; i++){
-            day= new DayHourly(
+            day= new DayHourlyDto(
                     waveResp.getHourly().getTime()[i],
+                    windResp.getHourly().getWeathercode()[i],
                     windResp.getHourly().getWindspeed_10m()[i],
                     waveResp.getHourly().getWave_height()[i]);
             week.add(day);
         }
 
-
-        List<DayHourly> daysList = week.stream()
+        List<DayHourlyDto> daysList = week.stream()
                 .filter(days -> days.getWave_height() < 0.6)
                 .filter(winds -> winds.getWindspeed_10m() > 10 && winds.getWindspeed_10m() < 17)
+                .filter(conditions -> conditions.getWeathercode() <= 3)
                 .filter(time ->
                         time.getTimeHourly().endsWith("12:00") ||
-                        time.getTimeHourly().endsWith("15:00") ||
-                        time.getTimeHourly().endsWith("17:00"))
-                .sorted(Comparator.comparing(DayHourly::getWave_height))
+                                time.getTimeHourly().endsWith("15:00") ||
+                                time.getTimeHourly().endsWith("17:00"))
                 .collect(Collectors.toList());
         return daysList;
     }
 
-    public CompleteResponse getWeather3() {
-        return webClient.get()
-                .uri(URL)
-                .retrieve()
-                .bodyToMono(CompleteResponse.class)
-                .block();
-    }
-
-
 
     public String firstDayCurrentWeek(){
         LocalDate currentDate = LocalDate.now();
-        // Calculate the first day of the week (Monday)
         return currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).toString();
     }
     public String lastDayCurrentWeek(){
         LocalDate currentDate = LocalDate.now();
-        // Calculate the first day of the week (Monday)
         return currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toString();
     }
 
-    private static double splitArrayUsingStreams(double[] originalArray, int grupIndex) {
-        double sum = 0;
-        double average = 0;
-        for (int i = 0; i < 24; i++) {
-            int startIndex = (grupIndex * 24);
-            int endIndex = startIndex + 24;
-            sum += originalArray[startIndex + i];
-        }
-        average = sum / 24;
-        return Math.round(average * 100.0) / 100.0;
+    public String firstDayNextWeek(){
+        LocalDate currentDate = LocalDate.now().plusWeeks(1);
+        return currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)).toString();
     }
+    public String lastDayNextWeek(){
+        LocalDate currentDate = LocalDate.now().plusWeeks(1);
+        return currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toString();
+    }
+    public static Date nextFriday(){
+        LocalDate currentDate = LocalDate.now();
+        return new java.util.Date(currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).toString());
+    }
+
+    public static String messageListBestDays(List<DayHourlyDto> dayHourlyList){
+        StringBuilder body = new StringBuilder();
+        int monday = 0;
+        int tuesday = 0;
+        int wednesday = 0;
+        int thursday = 0;
+        int friday = 0;
+        int saturday = 0;
+        int sunday = 0;
+
+        body.append("The best days for windsurfing are:");
+        for (DayHourlyDto dayHourly : dayHourlyList) {
+            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.MONDAY.toString())){
+                if(monday == 0){
+                    monday++;
+                    body.append("MONDAY: " + dayHourly.getTimeHourly().substring(0, 10));
+                }
+                body.append(dayHourly.toString());
+            }
+        }
+        body.append("\n\n");
+
+        for (DayHourlyDto dayHourly : dayHourlyList) {
+            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.TUESDAY.toString())){
+                if(tuesday == 0){
+                    tuesday++;
+                    body.append("TUESDAY: " + dayHourly.getTimeHourly().substring(0, 10));
+                }
+                body.append(dayHourly.toString());
+            }
+        }
+        body.append("\n\n");
+
+        for (DayHourlyDto dayHourly : dayHourlyList) {
+            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.WEDNESDAY.toString())){
+                if(wednesday == 0){
+                    wednesday++;
+                    body.append("WEDNESDAY: " + dayHourly.getTimeHourly().substring(0, 10));
+                }
+                body.append(dayHourly.toString());
+            }
+        }
+        body.append("\n\n");
+
+        for (DayHourlyDto dayHourly : dayHourlyList) {
+            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.THURSDAY.toString())){
+                if(thursday == 0){
+                    thursday++;
+                    body.append("THURSDAY: " + dayHourly.getTimeHourly().substring(0, 10));
+                }
+                body.append(dayHourly.toString());
+            }
+        }
+        body.append("\n\n");
+
+        for (DayHourlyDto dayHourly : dayHourlyList) {
+            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.FRIDAY.toString())){
+                if(friday == 0){
+                    friday++;
+                    body.append("FRIDAY: " + dayHourly.getTimeHourly().substring(0, 10));
+                }
+                body.append(dayHourly.toString());
+            }
+        }
+        body.append("\n\n");
+
+        for (DayHourlyDto dayHourly : dayHourlyList) {
+            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.SATURDAY.toString())){
+                if(saturday == 0){
+                    saturday++;
+                    body.append("SATURDAY: " + dayHourly.getTimeHourly().substring(0, 10));
+                }
+                body.append(dayHourly.toString());
+            }
+        }
+        body.append("\n\n");
+
+        for (DayHourlyDto dayHourly : dayHourlyList) {
+            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.SUNDAY.toString())){
+                if(sunday == 0){
+                    sunday++;
+                    body.append("SUNDAY: " + dayHourly.getTimeHourly().substring(0, 10));
+                }
+                body.append(dayHourly.toString());
+            }
+        }
+        return body.toString();
+    }
+
+    /**
+     * Other ways to get data
+     */
+
+
+//    public CompleteResponse getWeatherWebClient() {
+//        return webClient.get()
+//                .uri(URL)
+//                .retrieve()
+//                .bodyToMono(CompleteResponse.class)
+//                .block();
+//    }
+//
+//    public CompleteResponse getWeatherHttpRequestOption() {
+//        try{
+//            URI uri = new URI(URL_WEATHER_CURRENT_WEAK);
+//
+//            HttpRequest httpRequest = HttpRequest.newBuilder()
+//                    .uri(uri)
+//                    .GET()
+//                    .build();
+//            HttpClient httpClient = HttpClient.newHttpClient();
+//            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+//
+//            System.out.println(response.body());
+//            Gson gson = new Gson();
+//            CompleteResponse completeResponse = gson.fromJson(response.body(), CompleteResponse.class);
+//            System.out.println(URL_WEATHER_CURRENT_WEAK);
+//            System.out.println(URL_WAVE_CURRENT_WEEK);
+//
+//            return completeResponse;
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+//
 
 }
