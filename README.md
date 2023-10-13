@@ -11,20 +11,28 @@ filter this data to remove the bad weather and retrieve the best options.
 - Wind: 12-27 km/h
 - WeatherCode: Sunny, mainly Clear, partly cloudy, overcast
 
-🛜You can try the current API here deployed in AWS:
-http://35.180.87.109/weather/current_week
+### You can try the current API here deployed in AWS:
 
-Receive it in your mail:
-http://35.180.87.109/weather/current_week/{mail}
+📊WEBPAGE
+- [http://35.180.87.109/weather/next_7days/home](http://35.180.87.109/weather/next_7days/home)
+- [http://35.180.87.109/weather/current_week/home](http://35.180.87.109/weather/current_week/home)
+
+👾API:
+- [http://35.180.87.109/weather/current_week](http://35.180.87.109/weather/current_week)
+- [http://35.180.87.109/weather/next_7days](http://35.180.87.109/weather/next_7days)        
+
+📪Receive it in your mail:
+- [http://35.180.87.109/weather/current_week/{mail}](http://35.180.87.109/weather/current_week/{mail})
+
+![Email](src/main/resources/images/summary.jpg)
+
 
 ```
-    http://localhost:8080/weather/current_week              ->      Best days in Barcelona this week
-    http://localhost:8080/weather/next_week                 ->      Best days in Barcelona next week
-    http://localhost:8080/weather/current_week/{mail}       ->      It emails you the best days in Barcelona this week
-    http://localhost:8080/weather/next_week/{mail}          ->      It emails you the best days in Barcelona next week
+    http://localhost:8080/weather/current_week              ->      It goes to filtered API
+    http://localhost:8080/weather/current_week/{mail}       ->      It emails the summary
+    http://localhost:8080/weather/current_week/home         ->      It goes to webpage 
    
     *The schedule has been restricted to 12:00, 15:00, 17:00 which are the classes time
-    **If the data for next_week doesn't work means there isn't the data yet in the original API
 ```
 ```
 [
@@ -44,8 +52,6 @@ http://35.180.87.109/weather/current_week/{mail}
   }
 ]
 ```
-### Get your email 📫!
-![Email](src/main/resources/images/WindsurfScreenShot.png)
 
 
 <hr>

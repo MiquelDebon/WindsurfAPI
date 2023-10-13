@@ -38,6 +38,7 @@ public class WeatherController {
         return ResponseEntity.ok().body(weatherService.bestDaysNext7Days());
     }
 
+    //Email
     @GetMapping("/current_week/{email}")
     public ResponseEntity<?> sendEmailCurrentWeek(@PathVariable String email){
         List<DayHourlyDto> currentWeek = weatherService.bestDaysCurrentWeek();
@@ -57,14 +58,22 @@ public class WeatherController {
         return ResponseEntity.ok().body(next7days);
     }
 
+    //HTML rendered page
     @GetMapping("/next_7days/home")
-    public String homePage(Model model) {
-        model.addAttribute("body", "Best next 7 days Windsurf");
+    public String next7DaysHomePage(Model model) {
+        model.addAttribute("body", "Best 7 next days to do Windsurf");
         model.addAttribute("days", weatherService.bestDaysNext7Days());
+        return "home";
+    }
+    @GetMapping("/current_week/home")
+    public String currentWeekHomePage(Model model) {
+        model.addAttribute("body", "Best current-week-days to do Windsurf");
+        model.addAttribute("days", weatherService.bestDaysCurrentWeek());
         return "home";
     }
 
 
+    //Email with HTML
     @GetMapping("/html")
     public ResponseEntity<?> html(){
         emailService.sendMiquelEmail();
