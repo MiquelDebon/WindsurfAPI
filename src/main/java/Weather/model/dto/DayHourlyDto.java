@@ -1,4 +1,4 @@
-package Weather.dto;
+package Weather.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,6 +23,8 @@ public class DayHourlyDto {
     private String hour;
     @JsonIgnore
     private int weathercode;
+    @JsonIgnore
+    private String weathercodeIcon;
     @JsonProperty("Conditions:")
     private String conditions;
     @JsonProperty("Wind speed (10m)")
@@ -35,6 +37,7 @@ public class DayHourlyDto {
         this.timeHourly = timeHourly;
         this.hour = timeHourly.substring(11,16);
         this.weathercode = weathercode;
+        this.weathercodeIcon = weathercodeToConditionsIcon(weathercode);
         this.conditions = weathercodeToConditions(weathercode);
         this.windspeed_10m = windspeed_10m;
         this.wave_height = wave_height;
@@ -104,13 +107,13 @@ public class DayHourlyDto {
     public String weathercodeToConditionsIcon(int weathercode) {
         switch (weathercode) {
             case 0:
-                return "☀️Clear sky";
+                return "☀️ Clear sky";
             case 1:
-                return "🌥️Mainly clear";
+                return "🌥️ Mainly clear";
             case 2:
-                return "⛅️Partly cloudy";
+                return "⛅️ Partly cloudy";
             case 3:
-                return "☁️Overcast";
+                return "☁️ Overcast";
         }
         return null;
     }

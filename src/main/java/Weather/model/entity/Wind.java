@@ -1,4 +1,4 @@
-package Weather.entity;
+package Weather.model.entity;
 
 
 import lombok.AllArgsConstructor;

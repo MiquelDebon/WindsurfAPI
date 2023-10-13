@@ -1,12 +1,18 @@
-package Weather.services;
+package Weather.model.services;
 
-import Weather.dto.DayHourlyDto;
+import Weather.model.dto.DayHourlyDto;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -47,5 +53,30 @@ public class EmailService {
         mailSender.send(message);
         System.out.println("Email sent");
     }
+
+    private String cargarContenidoCorreo() throws IOException {
+        File file = new ClassPathResource("templates/email.html").getFile();
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+    }
+
+
+    public void sendMiquelEmail() {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+
+            helper.setTo("mdebonbcn@gmail.com");
+            helper.setSubject("mdebonbcn@gmail.com");
+
+            String contenidoHtml = cargarContenidoCorreo();
+
+            helper.setText(contenidoHtml, true);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al enviar el correo: " + e.getMessage(), e);
+        }
+    }
+
 
 }
