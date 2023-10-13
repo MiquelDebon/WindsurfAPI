@@ -4,6 +4,7 @@
 <head th:fragment="head">
     <meta charset="UTF-8">
     <title>Dice Game - @Miquel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Texts Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,8 +34,8 @@
 
 <div class="row">
     <div class="container col-lg-7 col-md-10 col-sml-11">
-        <h2 style="margin:100px 0px 40px; text-align:center;">🌊Windsurf summary🏄</h2>
-        <h4 th:text = "${body}" > </h4>
+        <h1 style="margin:100px 0px 40px; text-align:center;">🌊Windsurf summary🏄</h1>
+        <h2 th:text = "${body}" > </h2>
 
         <div class="container">
             <div class="row">
@@ -46,7 +47,6 @@
                     <a href="http://35.180.87.109/weather/next_7days"         >API - Next seven days</a><br>
                     <a href="http://35.180.87.109/weather/current_week"       >API - Current week</a><br>
                 </div>
-
             </div>
         </div>
         <br>
@@ -54,24 +54,35 @@
         <table class = "table table-dark bdr">
             <thead>
             <tr>
-                <th scope = "col">Day of the week</th>
+                <th scope = "col">Day</th>
                 <th scope = "col">Time</th>
-                <th scope = "col">Conditions</th>
-                <th scope = "col">Wind speed(10m)</th>
-                <th scope = "col">Wave height</th>
+                <th scope = "col" class="sidebar">Conditions</th>
+                <th scope = "col">Wind </th>
+                <th scope = "col">Wave </th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="DTO: ${days}">
                 <td th:text = "${DTO.dayOfTheWeek}"></td>
                 <td th:text = "${DTO.hour}"></td>
-                <td th:text = "${DTO.weathercodeIcon}"></td>
+                <td th:text = "${DTO.weathercodeIcon} "></td>
                 <td th:text = "${DTO.windspeed_10m}"></td>
                 <td th:text = "${DTO.wave_height}"></td>
             </tr>
             </tbody>
         </table>
         <br>
+        <div class="container">
+            <div class="row">
+                <div class="container-fluid col-6">
+                    <p style="text-align:center">Wind: km/h</p>
+                </div>
+                <div class="container-fluid col-6">
+                    <p style="text-align:center">Wave: m</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

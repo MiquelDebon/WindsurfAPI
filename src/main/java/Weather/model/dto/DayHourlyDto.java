@@ -33,7 +33,7 @@ public class DayHourlyDto {
     private double wave_height;
 
     public DayHourlyDto(String timeHourly, int weathercode, double windspeed_10m, double wave_height) {
-        this.dayOfTheWeek = dayOfTheWeek(timeHourly);
+        this.dayOfTheWeek = dayOfTheWeekShort(timeHourly);
         this.timeHourly = timeHourly;
         this.hour = timeHourly.substring(11,16);
         this.weathercode = weathercode;
@@ -58,7 +58,12 @@ public class DayHourlyDto {
         LocalDate date = LocalDate.parse(timeHourly.substring(0,10), DateTimeFormatter.ISO_LOCAL_DATE);
         // Get the day of the week from the LocalDate object
         return date.getDayOfWeek().toString();
-
+    }
+    public String dayOfTheWeekShort(String timeHourly){
+        // Parse the date string into a LocalDate object
+        LocalDate date = LocalDate.parse(timeHourly.substring(0,10), DateTimeFormatter.ISO_LOCAL_DATE);
+        // Get the day of the week from the LocalDate object
+        return date.getDayOfWeek().toString().substring(0,3) + " " + timeHourly.substring(5, 10);
     }
 
     public String weathercodeToConditions(int weathercode) {

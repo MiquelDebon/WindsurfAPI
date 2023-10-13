@@ -86,15 +86,9 @@ p{
 
 
 
-@media (min-width : 200px)  {
+@media (min-width : 100px)  {
     .container th, .container td {
-        font-size: 1.3rem;
-      }
-}
-
-@media (min-width : 800px)  {
-    .container th, .container td {
-        font-size: 1.2rem;
+        font-size: 0.8rem;
       }
 }
 

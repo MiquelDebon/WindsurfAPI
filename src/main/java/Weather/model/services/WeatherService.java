@@ -40,10 +40,10 @@ public class WeatherService {
     //Next 7Days
     private final String URL_WAVE_NEXT_7DAYS = "https://marine-api.open-meteo.com/v1/marine?latitude=41.3888&longitude=2.159&hourly=wave_height&" +
             "start_date="   +   LocalDate.now() + "&" +
-            "end_date="     +   LocalDate.now().plusDays(7);
+            "end_date="     +   LocalDate.now().plusDays(10);
     private final String URL_WIND_NEXT_7DAYS = "https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&hourly=weathercode,windspeed_10m&current_weather=true&" +
             "start_date="   +   LocalDate.now() + "&" +
-            "end_date="     +   LocalDate.now().plusDays(7);
+            "end_date="     +   LocalDate.now().plusDays(10);
 
 
 
