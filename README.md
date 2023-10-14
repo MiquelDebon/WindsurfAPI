@@ -14,12 +14,12 @@ filter this data to remove the bad weather and retrieve the best options.
 ### You can try the current API here deployed in AWS:
 
 📊WEBPAGE
-- [http://35.180.87.109/weather/next_7days/home](http://35.180.87.109/weather/next_7days/home)
+- [http://35.180.87.109/weather/next_days/home](http://35.180.87.109/weather/next_days/home)
 - [http://35.180.87.109/weather/current_week/home](http://35.180.87.109/weather/current_week/home)
 
 👾API:
 - [http://35.180.87.109/weather/current_week](http://35.180.87.109/weather/current_week)
-- [http://35.180.87.109/weather/next_7days](http://35.180.87.109/weather/next_7days)        
+- [http://35.180.87.109/weather/next_days](http://35.180.87.109/weather/next_days)        
 
 📪Receive it in your mail:
 - [http://35.180.87.109/weather/current_week/{mail}](http://35.180.87.109/weather/current_week/{mail})

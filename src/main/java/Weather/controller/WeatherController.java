@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class WeatherController {
     }
     @GetMapping("/next_7days")
     public ResponseEntity<?> apiGetWeatherNext7Days(){
-        return ResponseEntity.ok().body(weatherService.bestDaysNext7Days());
+        return ResponseEntity.ok().body(weatherService.bestDaysNextDays());
     }
 
     //Email
@@ -45,12 +44,12 @@ public class WeatherController {
         emailService.sendEmail(
                 email,
                 "Current week Windsurf Best Days",
-                weatherService.bestDaysCurrentWeek());
+                currentWeek);
         return ResponseEntity.ok().body(currentWeek);
     }
-    @GetMapping("/next_7days/{email}")
+    @GetMapping("/next_days/{email}")
     public ResponseEntity<?> sendEmailNext7Days(@PathVariable String email){
-        List<DayHourlyDto> next7days = weatherService.bestDaysNext7Days();
+        List<DayHourlyDto> next7days = weatherService.bestDaysNextDays();
         emailService.sendEmail(
                 email,
                 "Next 7 days Windsurf - Best Days",
@@ -59,15 +58,15 @@ public class WeatherController {
     }
 
     //HTML rendered page
-    @GetMapping("/next_7days/home")
+    @GetMapping("/next_days/home")
     public String next7DaysHomePage(Model model) {
-        model.addAttribute("body", "Best 7 next days to do Windsurf");
-        model.addAttribute("days", weatherService.bestDaysNext7Days());
+        model.addAttribute("body", "Best following days");
+        model.addAttribute("days", weatherService.bestDaysNextDays());
         return "home";
     }
     @GetMapping("/current_week/home")
     public String currentWeekHomePage(Model model) {
-        model.addAttribute("body", "Best current-week-days to do Windsurf");
+        model.addAttribute("body", "Best current week days");
         model.addAttribute("days", weatherService.bestDaysCurrentWeek());
         return "home";
     }

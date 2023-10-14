@@ -38,10 +38,10 @@ public class WeatherService {
             "end_date="  + lastDayCurrentWeek();
 
     //Next 7Days
-    private final String URL_WAVE_NEXT_7DAYS = "https://marine-api.open-meteo.com/v1/marine?latitude=41.3888&longitude=2.159&hourly=wave_height&" +
+    private final String URL_WAVE_NEXT_DAYS = "https://marine-api.open-meteo.com/v1/marine?latitude=41.3888&longitude=2.159&hourly=wave_height&" +
             "start_date="   +   LocalDate.now() + "&" +
             "end_date="     +   LocalDate.now().plusDays(10);
-    private final String URL_WIND_NEXT_7DAYS = "https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&hourly=weathercode,windspeed_10m&current_weather=true&" +
+    private final String URL_WIND_NEXT_DAYS = "https://api.open-meteo.com/v1/forecast?latitude=41.3888&longitude=2.159&hourly=weathercode,windspeed_10m&current_weather=true&" +
             "start_date="   +   LocalDate.now() + "&" +
             "end_date="     +   LocalDate.now().plusDays(10);
 
@@ -53,9 +53,9 @@ public class WeatherService {
         ResponseEntity<Wind> wind = restTemplate.getForEntity(URL_WIND_CURRENT_WEEK, Wind.class);
         return daysListFilterLogic(waves, wind);
     }
-    public List<DayHourlyDto> bestDaysNext7Days() {
-        ResponseEntity<Wave> waves = restTemplate.getForEntity(URL_WAVE_NEXT_7DAYS, Wave.class);
-        ResponseEntity<Wind> wind = restTemplate.getForEntity(URL_WIND_NEXT_7DAYS, Wind.class);
+    public List<DayHourlyDto> bestDaysNextDays() {
+        ResponseEntity<Wave> waves = restTemplate.getForEntity(URL_WAVE_NEXT_DAYS, Wave.class);
+        ResponseEntity<Wind> wind = restTemplate.getForEntity(URL_WIND_NEXT_DAYS, Wind.class);
         return daysListFilterLogic(waves, wind);
     }
 
@@ -113,7 +113,7 @@ public class WeatherService {
 
         body.append("The best days for windsurfing are:\n\n");
         for (DayHourlyDto dayHourly : dayHourlyList) {
-            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.MONDAY.toString())){
+            if(dayHourly.getDayOfTheWeek().startsWith("MON")){
                 if(monday == 0){
                     monday++;
                     body.append("MONDAY: " + dayHourly.getTimeHourly().substring(0, 10));
@@ -124,7 +124,7 @@ public class WeatherService {
         if(monday != 0) body.append("\n\n");
 
         for (DayHourlyDto dayHourly : dayHourlyList) {
-            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.TUESDAY.toString())){
+            if(dayHourly.getDayOfTheWeek().startsWith("TUE")){
                 if(tuesday == 0){
                     tuesday++;
                     body.append("TUESDAY: " + dayHourly.getTimeHourly().substring(0, 10));
@@ -135,7 +135,7 @@ public class WeatherService {
         if(tuesday != 0) body.append("\n\n");
 
         for (DayHourlyDto dayHourly : dayHourlyList) {
-            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.WEDNESDAY.toString())){
+            if(dayHourly.getDayOfTheWeek().startsWith("WED")){
                 if(wednesday == 0){
                     wednesday++;
                     body.append("WEDNESDAY: " + dayHourly.getTimeHourly().substring(0, 10));
@@ -146,7 +146,7 @@ public class WeatherService {
         if(wednesday != 0) body.append("\n\n");
 
         for (DayHourlyDto dayHourly : dayHourlyList) {
-            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.THURSDAY.toString())){
+            if(dayHourly.getDayOfTheWeek().startsWith("THU")){
                 if(thursday == 0){
                     thursday++;
                     body.append("THURSDAY: " + dayHourly.getTimeHourly().substring(0, 10));
@@ -157,7 +157,7 @@ public class WeatherService {
         if(thursday != 0) body.append("\n\n");
 
         for (DayHourlyDto dayHourly : dayHourlyList) {
-            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.FRIDAY.toString())){
+            if(dayHourly.getDayOfTheWeek().startsWith("FRI")){
                 if(friday == 0){
                     friday++;
                     body.append("FRIDAY: " + dayHourly.getTimeHourly().substring(0, 10));
@@ -168,7 +168,7 @@ public class WeatherService {
         if(friday != 0) body.append("\n\n");
 
         for (DayHourlyDto dayHourly : dayHourlyList) {
-            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.SATURDAY.toString())){
+            if(dayHourly.getDayOfTheWeek().startsWith("SAT")){
                 if(saturday == 0){
                     saturday++;
                     body.append("SATURDAY: " + dayHourly.getTimeHourly().substring(0, 10));
@@ -179,7 +179,7 @@ public class WeatherService {
         if(saturday != 0) body.append("\n\n");
 
         for (DayHourlyDto dayHourly : dayHourlyList) {
-            if(dayHourly.getDayOfTheWeek().equals(DayOfWeek.SUNDAY.toString())){
+            if(dayHourly.getDayOfTheWeek().startsWith("SUN")){
                 if(sunday == 0){
                     sunday++;
                     body.append("SUNDAY: " + dayHourly.getTimeHourly().substring(0, 10));
