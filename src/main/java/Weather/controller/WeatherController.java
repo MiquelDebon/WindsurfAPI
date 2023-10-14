@@ -32,7 +32,7 @@ public class WeatherController {
     public ResponseEntity<?> apiGetWeatherCurrentWeek(){
         return ResponseEntity.ok().body(weatherService.bestDaysCurrentWeek());
     }
-    @GetMapping("/next_7days")
+    @GetMapping("/next_days")
     public ResponseEntity<?> apiGetWeatherNext7Days(){
         return ResponseEntity.ok().body(weatherService.bestDaysNextDays());
     }
