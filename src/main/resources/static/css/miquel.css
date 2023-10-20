@@ -1,29 +1,7 @@
-.small-text{
-  font-size: 0.8rem;
-  margin: 0
-}
-
-#footer{
-  text-align: center;
-  padding: 2% 15%}
-
-.bellow-bar{
-  margin: 10px 0px 0px 0px;
-}
 
 a{
-    color: #8EB8E5;
-}
-
-.footer-icon{
-  padding: 5px}
-
-.footer-icon-ind{
-  margin: 6px;
-}
-
-.scale-icon:hover{
-  transform: scale(1.5);
+    color: #5bc0de;
+    text-decoration: none;
 }
 
 body{
@@ -85,17 +63,28 @@ p{
     margin: 0px, 0px;
 }
 
+.scale:hover{
+  transform: scale(1.5);
+  font-size: 110%;
+}
+
 
 
 @media (min-width : 100px)  {
     .container th, .container td {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
       }
+    a{
+    font-size: 0.9rem;
+    }
 }
 
 @media (min-width : 1000px) {
   .container th, .container td {
     font-size: 1rem;
+  }
+  a{
+      font-size: 1rem;
   }
 }
 
