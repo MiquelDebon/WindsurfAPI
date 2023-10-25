@@ -24,7 +24,7 @@ filter this data to remove the bad weather and retrieve the best options.
 📪Receive it in your mail:
 - [http://35.180.87.109/weather/current_week/{mail}](http://35.180.87.109/weather/current_week/{mail})
 
-![Email](src/main/resources/images/summary.jpg)
+![Email](src/main/resources/images/summary.png)
 
 
 ```

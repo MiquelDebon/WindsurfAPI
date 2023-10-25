@@ -42,14 +42,13 @@ public class EmailService {
         System.out.println("Email sent");
     }
 
-    public void sendNextFridayEmail(String toEmail, String subject, String body) {
+    public void sendEmail(String toEmail, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setFrom("mdebonbcn@gmail.com");
         message.setTo(toEmail);
-        message.setSubject(subject);
+        message.setSubject("Best current week days");
         message.setText(body);
-        message.setSentDate(WeatherService.nextFriday());
 
         mailSender.send(message);
         System.out.println("Email sent");

@@ -1,15 +1,15 @@
 package Weather.controller;
 
 import Weather.model.dto.DayHourlyDto;
+import Weather.model.dto.EmailDto;
 import Weather.model.services.EmailService;
 import Weather.model.services.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -56,6 +56,21 @@ public class WeatherController {
                 next7days);
         return ResponseEntity.ok().body(next7days);
     }
+    @PostMapping("/sendEmail")
+    public String sendEmailFromWebSite(@ModelAttribute("email")  EmailDto email, BindingResult result, Model model){
+        List<DayHourlyDto> next7days = weatherService.bestDaysNextDays();
+
+        emailService.sendEmail(
+                email.getEmail(),
+                "Next 7 days Windsurf - Best Days",
+                next7days
+        );
+
+        model.addAttribute("body", "Best following days");
+        model.addAttribute("days", weatherService.bestDaysNextDays());
+        return "redirect:/weather/next_days/home";
+    }
+
 
     //HTML rendered page
     @GetMapping("/next_days/home")
@@ -70,6 +85,8 @@ public class WeatherController {
         model.addAttribute("days", weatherService.bestDaysCurrentWeek());
         return "home";
     }
+
+
 
 
     //Email with HTML

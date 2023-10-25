@@ -3,7 +3,7 @@
 
 <head th:fragment="head">
     <meta charset="UTF-8">
-    <title>Dice Game - @Miquel</title>
+    <title>Just Windsurf</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" th:href="@{/css/favicon.ico}">
 
@@ -72,6 +72,26 @@
             </tr>
             </tbody>
         </table>
+        <div>
+            <form th:action="@{/weather/sendEmail}" th:object="${email}" method="post" role="form">
+                <div class="form-group">
+                    <label for="username">Email address</label>
+                    <input
+                            id="username"
+                            type="email"
+                            name="email"
+                            required autofocus="autofocus"
+                            class="form-control"
+                            placeholder="email@example.com">
+                </div>
+                <br>
+                <input
+                        type="submit"
+                        value="Send"
+                        class="form-control  btn btn-primary">
+            </form>
+        </div>
+
         <br>
         <div class="container">
             <div class="row">
