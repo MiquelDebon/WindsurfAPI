@@ -13,24 +13,27 @@ filter this data to remove the bad weather and retrieve the best options.
 
 ### You can try the current API here deployed in AWS:
 
-📊WEBPAGE
-- [http://35.180.87.109/weather/next_days/home](http://35.180.87.109/weather/next_days/home)
-- [http://35.180.87.109/weather/current_week/home](http://35.180.87.109/weather/current_week/home)
+📊 WEBPAGE
+- [http://193.203.190.86/weather/next_days/home](http://193.203.190.86/weather/next_days/home)
+- [http://193.203.190.86/weather/current_week/home](http://193.203.190.86/weather/current_week/home)
 
-👾API:
-- [http://35.180.87.109/weather/current_week](http://35.180.87.109/weather/current_week)
-- [http://35.180.87.109/weather/next_days](http://35.180.87.109/weather/next_days)        
 
-📪Receive it in your mail:
-- [http://35.180.87.109/weather/current_week/{mail}](http://35.180.87.109/weather/current_week/{mail})
+👾 API:
+- [http://193.203.190.86/weather/next_days](http://193.203.190.86/weather/next_days)        
+- [http://193.203.190.86/weather/current_week](http://193.203.190.86/weather/current_week)
+
+
+📪 Receive it in your mail:
+- http://193.203.190.86/weather/next_days/{mail}
+- Subscribe by the Webpage
 
 ![Email](src/main/resources/images/summary.png)
 
 
 ```
-    http://localhost:8080/weather/current_week              ->      It goes to filtered API
-    http://localhost:8080/weather/current_week/{mail}       ->      It emails the summary
-    http://localhost:8080/weather/current_week/home         ->      It goes to webpage 
+    http://localhost:8081/weather/current_week              ->      It goes to filtered API
+    http://localhost:8081/weather/current_week/{mail}       ->      It emails the summary
+    http://localhost:8081/weather/current_week/home         ->      It goes to webpage 
    
     *The schedule has been restricted to 12:00, 15:00, 17:00 which are the classes time
 ```

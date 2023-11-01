@@ -6,7 +6,7 @@ a{
 
 body{
   font-family: Montserrat
-  lor:gray;
+  color:gray;
   margin:3%;
 }
 
@@ -14,10 +14,16 @@ h1,h2,h3,h4,h5,h6 {
   font-family: Montserrat;
   font-weight: bold}
 
+label{
+    font-weight: light;
+    font-size: 0.8rem;
+}
+
 p{
-  font-weight: light;
-  color: #BCB3B6;
-  font-size: 1.2rem;}
+    color: #BCB3B6;
+    font-size: 0.7rem;
+    margin: 0px;
+}
 
 .colored-section{
     color : white;
@@ -39,6 +45,7 @@ p{
 }
 
  .alert-text {
+    margin
     display: flex;
     justify-content: flex;
     align-items: flex-end;
@@ -48,6 +55,15 @@ p{
     position: fixed;
     left: 50%;
     transform: translate(-50%, 0);
+}
+
+input{
+    margin:3px;
+}
+
+.color{
+    font-weight: bold;
+    color: #3E92CC;
 }
 
 .bdr {
@@ -64,11 +80,22 @@ p{
 }
 
 .scale:hover{
-  transform: scale(1.5);
-  font-size: 110%;
+    transform: scale(1.5);
+    font-size: 110%;
 }
 
+.fade-out {
+    opacity: 1;
+    transition: opacity 2s ease-in-out; /* Adjust the duration as needed */
+}
 
+.fade-out.hidden {
+    opacity: 0;
+}
+
+.hoverblue:hover{
+    color: blue;
+}
 
 @media (min-width : 100px)  {
     .container th, .container td {

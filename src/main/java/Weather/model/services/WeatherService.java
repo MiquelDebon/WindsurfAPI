@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,33 +59,77 @@ public class WeatherService {
         ResponseEntity<Wind> wind = restTemplate.getForEntity(URL_WIND_NEXT_DAYS, Wind.class);
         return daysListFilterLogic(waves, wind);
     }
+    public List<DayHourlyDto> allNextDays() {
+        ResponseEntity<Wave> waves = restTemplate.getForEntity(URL_WAVE_NEXT_DAYS, Wave.class);
+        ResponseEntity<Wind> wind = restTemplate.getForEntity(URL_WIND_NEXT_DAYS, Wind.class);
+        return getAllDays(waves, wind);
+    }
+
+
 
 
     public List<DayHourlyDto> daysListFilterLogic(ResponseEntity<Wave> waves, ResponseEntity<Wind> wind) {
         Wave waveResp = waves.getBody();
         Wind windResp = wind.getBody();
 
-        DayHourlyDto day ;
-        List<DayHourlyDto> week = new ArrayList<DayHourlyDto>();
-        for(int i = 0; i < waveResp.getHourly().getTime().length; i++){
-            day= new DayHourlyDto(
-                    waveResp.getHourly().getTime()[i],
-                    windResp.getHourly().getWeathercode()[i],
-                    windResp.getHourly().getWindspeed_10m()[i],
-                    waveResp.getHourly().getWave_height()[i]);
-            week.add(day);
-        }
+        List<DayHourlyDto> week = waveWindToDayList(waveResp, windResp);
 
-        List<DayHourlyDto> daysList = week.stream()
-                .filter(days -> days.getWave_height() < 0.6)
+        return week.stream()
+                .filter(time ->
+                        time.getTimeHourly().endsWith("12:00") ||
+                                time.getTimeHourly().endsWith("15:00") ||
+                                time.getTimeHourly().endsWith("17:00"))
+                .filter(days -> days.getWave_height() < 0.7)
                 .filter(winds -> winds.getWindspeed_10m() > 10 && winds.getWindspeed_10m() < 17)
                 .filter(conditions -> conditions.getWeathercode() <= 3)
+                .collect(Collectors.toList());
+    }
+
+    public List<DayHourlyDto> getAllDays(ResponseEntity<Wave> waves, ResponseEntity<Wind> wind){
+        Wave waveResp = waves.getBody();
+        Wind windResp = wind.getBody();
+
+        List<DayHourlyDto> week = waveWindToDayList(waveResp, windResp);
+
+        List<DayHourlyDto> summary = week.stream()
                 .filter(time ->
                         time.getTimeHourly().endsWith("12:00") ||
                                 time.getTimeHourly().endsWith("15:00") ||
                                 time.getTimeHourly().endsWith("17:00"))
                 .collect(Collectors.toList());
-        return daysList;
+
+        List<DayHourlyDto> resultList = new ArrayList<>();
+        Iterator<DayHourlyDto> iterator = summary.iterator();
+        DayHourlyDto currentDto = iterator.next();
+
+        resultList.add(currentDto);
+
+        while (iterator.hasNext()) {
+            DayHourlyDto nextDto = iterator.next();
+            if (!currentDto.getDayOfTheWeek().equals(nextDto.getDayOfTheWeek())) {
+                // Day of the week changed, add an empty instance
+                DayHourlyDto emptyDto = new DayHourlyDto();
+                resultList.add(emptyDto);
+            }
+            resultList.add(nextDto);
+            currentDto = nextDto;
+        }
+
+        return resultList;
+    }
+
+    public List<DayHourlyDto> waveWindToDayList(Wave wave, Wind wind) {
+        DayHourlyDto day ;
+        List<DayHourlyDto> week = new ArrayList<DayHourlyDto>();
+        for(int i = 0; i < wave.getHourly().getTime().length; i++){
+            day= new DayHourlyDto(
+                    wave.getHourly().getTime()[i],
+                    wind.getHourly().getWeathercode()[i],
+                    wind.getHourly().getWindspeed_10m()[i],
+                    wave.getHourly().getWave_height()[i]);
+            week.add(day);
+        }
+        return week;
     }
 
 
@@ -190,42 +235,6 @@ public class WeatherService {
         return body.toString();
     }
 
-    /**
-     * Other ways to get data
-     */
 
-
-//    public CompleteResponse getWeatherWebClient() {
-//        return webClient.get()
-//                .uri(URL)
-//                .retrieve()
-//                .bodyToMono(CompleteResponse.class)
-//                .block();
-//    }
-//
-//    public CompleteResponse getWeatherHttpRequestOption() {
-//        try{
-//            URI uri = new URI(URL_WEATHER_CURRENT_WEAK);
-//
-//            HttpRequest httpRequest = HttpRequest.newBuilder()
-//                    .uri(uri)
-//                    .GET()
-//                    .build();
-//            HttpClient httpClient = HttpClient.newHttpClient();
-//            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-//
-//            System.out.println(response.body());
-//            Gson gson = new Gson();
-//            CompleteResponse completeResponse = gson.fromJson(response.body(), CompleteResponse.class);
-//            System.out.println(URL_WEATHER_CURRENT_WEAK);
-//            System.out.println(URL_WAVE_CURRENT_WEEK);
-//
-//            return completeResponse;
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
 
 }

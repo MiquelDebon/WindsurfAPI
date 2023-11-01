@@ -29,85 +29,131 @@
 </head>
 
 <body>
+    <div class="row">
+        <div class="container col-lg-7 col-md-10 col-sml-11">
+            <h1 style="margin:85px 0px 40px; text-align:center;">🌊 Windsurf 🏄</h1>
+<!--            <h2 th:text = "${body}" > </h2>-->
 
-<!--Top Navigation Bar  -->
-
-
-<div class="row">
-    <div class="container col-lg-7 col-md-10 col-sml-11">
-        <h1 style="margin:85px 0px 40px; text-align:center;">🌊 Windsurf 🏄</h1>
-        <h2 th:text = "${body}" > </h2>
-
-        <div class="container">
-            <div class="row">
-                <div class="container-fluid col-6">
-                    <a class="scale" href="http://35.180.87.109/weather/next_days/home"    >PAGE - Following days</a> <br>
-                    <a class="scale" href="http://35.180.87.109/weather/current_week/home"  >PAGE - Current week</a> <br>
-                </div>
-                <div class="container-fluid col-6">
-                    <a class="scale" href="http://35.180.87.109/weather/next_days"         >API - Following days</a><br>
-                    <a class="scale" href="http://35.180.87.109/weather/current_week"       >API - Current week</a><br>
-                </div>
-            </div>
-        </div>
-        <br>
-
-        <table class = "table table-info bdr">
-            <thead>
-            <tr>
-                <th scope = "col">Day</th>
-                <th scope = "col">Time</th>
-                <th scope = "col" class="sidebar">Conditions</th>
-                <th scope = "col">Wind </th>
-                <th scope = "col">Wave </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="DTO: ${days}">
-                <td th:text = "${DTO.dayOfTheWeek}"></td>
-                <td th:text = "${DTO.hour}"></td>
-                <td th:text = "${DTO.weathercodeIcon} "></td>
-                <td th:text = "${DTO.windspeed_10m}"></td>
-                <td th:text = "${DTO.wave_height}"></td>
-            </tr>
-            </tbody>
-        </table>
-        <div>
-            <form th:action="@{/weather/sendEmail}" th:object="${email}" method="post" role="form">
-                <div class="form-group">
-                    <label for="username">Email address</label>
-                    <input
-                            id="username"
-                            type="email"
-                            name="email"
-                            required autofocus="autofocus"
-                            class="form-control"
-                            placeholder="email@example.com">
-                </div>
-                <br>
-                <input
-                        type="submit"
-                        value="Send"
-                        class="form-control  btn btn-primary">
-            </form>
-        </div>
-
-        <br>
-        <div class="container">
-            <div class="row">
-                <div class="container-fluid col-6">
-                    <p style="text-align:center">Wind: km/h</p>
-                </div>
-                <div class="container-fluid col-6">
-                    <p style="text-align:center">Wave: m</p>
+            <div class="container">
+                <div class="row">
+                    <div class="container-fluid col-6">
+                        <a class="hoverblue" th:class="${paramValue == '/next_days/home' ? 'color' : ''}"
+                            th:href="'http://' + ${@environment.getProperty('custom.ip')} + '/weather/next_days/home'" >
+                            PAGE - Following days</a> <br>
+                        <a class="hoverblue" th:class="${paramValue == '/current_week/home' ? 'color' : ''}"
+                            th:href="'http://' + ${@environment.getProperty('custom.ip')} + '/weather/current_week/home'"  >
+                            PAGE - Current week</a> <br>
+                        <a class="hoverblue" th:class="${paramValue == '/all_next_days/home' ? 'color' : ''}"
+                            th:href="'http://' + ${@environment.getProperty('custom.ip')} + '/weather/all_next_days/home'">
+                            PAGE - All next days</a>
+                    </div>
+                    <div class="container-fluid col-6">
+                        <a class="hoverblue" th:href="'http://' + ${@environment.getProperty('custom.ip')} + '/weather/next_days'" >API - Following days</a><br>
+                        <a class="hoverblue" th:href="'http://' + ${@environment.getProperty('custom.ip')} + '/weather/current_week'" >API - Current week</a><br>
+                    </div>
                 </div>
             </div>
-        </div>
+            <br>
 
+            <table class = "table table-info bdr">
+                <thead>
+                <tr>
+                    <th scope = "col">Day</th>
+                    <th scope = "col">Time</th>
+                    <th scope = "col" class="sidebar">Conditions</th>
+                    <th scope = "col">Wind* </th>
+                    <th scope = "col">Wave* </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="DTO: ${days}">
+                    <td th:text = "${DTO.dayOfTheWeek}"></td>
+                    <td th:text = "${DTO.hour}"></td>
+                    <td th:text = "${DTO.weathercodeIcon} "></td>
+                    <td th:text = "${DTO.windspeed_10m}"></td>
+                    <td th:text = "${DTO.wave_height}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+
+    <div class="row">
+        <div class="container col-lg-7 col-md-10 col-sml-11">
+            <div class="container">
+                <div class="row">
+                    <div class="container col-6" style="padding: 0px 5px 0px 0px">
+                        <form th:action="@{/weather/sendEmail}" th:object="${email}" method="post" role="form">
+                            <div class="form-group">
+                                <label for="username">Receive an email now</label>
+                                <input
+                                        id="username"
+                                        type="email"
+                                        name="email"
+                                        required autofocus="autofocus"
+                                        class="form-control"
+                                        placeholder="Email">
+                            </div>
+                            <input
+                                    type="submit"
+                                    value="Send now"
+                                    class="form-control  btn btn-primary">
+                        </form>
+                    </div>
+                    <div class="container-fluid col-6" style="padding: 0px 0px 0px 5px">
+                        <form th:action="@{/weather/subscribe}" th:object="${subscriber}" method="post" role="form">
+                            <div class="form-group">
+                                <label for="email">Subscribe/Unsubscribe</label>
+                                <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        required autofocus="autofocus"
+                                        class="form-control"
+                                        placeholder="Email">
+                            </div>
+                            <input
+                                    type="submit"
+                                    value="Subscribe now"
+                                    class="form-control  btn btn-warning">
+                        </form>
+                    </div>
+                    <br>
+                </div>
+            </div>
+
+            <div class="container" style="margin: 8px 0px 0px 0px; padding: 0px">
+                <p>* Wind: km/h and  Wave: m</p>
+                <p>* If you subscribe, you will receive a weekly summary email every Friday, which will list the best days for practicing windsurfing. To unsubscribe, simply enter your email again, and you will be immediately removed from our database.</p>
+            </div>
+
+            <div>
+                <br>
+                <div th:if="${param.emptydays}" class="alert alert-danger text-center">
+                    Seems there aren't any good days!
+                </div>
+                <div th:if="${param.unsubscribe}" class="alert alert-danger text-center" id="message-alert">
+                    User unsubscribed!
+                </div>
+                <div th:if="${param.subscribe}" class="alert alert-success text-center" id="message-alert">
+                    User subscribed!
+                </div>
+                <div th:if="${param.sent}" class="alert alert-info text-center" id="message-alert" >
+                    Email sent!
+                </div>
+            </div>
+        </div>
+    </div>
 
 
+    <script>
+        var alert = document.getElementById('message-alert');
+        alert.classList.add('fade-out');
+
+        setTimeout(function() {
+            alert.classList.add('hidden');
+        }, 1000); // Adjust the duration as needed
+    </script>
 
 
 

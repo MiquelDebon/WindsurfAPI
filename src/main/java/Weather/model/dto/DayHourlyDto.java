@@ -55,7 +55,7 @@ public class DayHourlyDto {
 
     public String dayOfTheWeek(String timeHourly){
         // Parse the date string into a LocalDate object
-        LocalDate date = LocalDate.parse(timeHourly.substring(0,10), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate date = LocalDate.parse(timeHourly.substring(0,7), DateTimeFormatter.ISO_LOCAL_DATE);
         // Get the day of the week from the LocalDate object
         return date.getDayOfWeek().toString();
     }
@@ -63,7 +63,7 @@ public class DayHourlyDto {
         // Parse the date string into a LocalDate object
         LocalDate date = LocalDate.parse(timeHourly.substring(0,10), DateTimeFormatter.ISO_LOCAL_DATE);
         // Get the day of the week from the LocalDate object
-        return date.getDayOfWeek().toString().substring(0,3) + " " + timeHourly.substring(5, 10);
+        return date.getDayOfWeek().toString().substring(0,3) + " " + timeHourly.substring(8, 10);
     }
 
     public String weathercodeToConditions(int weathercode) {
