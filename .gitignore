@@ -33,4 +33,18 @@ build/
 .vscode/
 
 ##Properties File
-/src/main/resources/application.properties
+**/application-prod.properties
+**/application-dev.properties
+
+# OS generated files #
+######################
+.lock
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+*.db

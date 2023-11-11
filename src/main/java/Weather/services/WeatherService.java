@@ -1,4 +1,4 @@
-package Weather.model.services;
+package Weather.services;
 
 import Weather.model.dto.DayHourlyDto;
 import Weather.model.entity.Wave;
@@ -12,7 +12,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -141,10 +140,8 @@ public class WeatherService {
         LocalDate currentDate = LocalDate.now();
         return currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).toString();
     }
-    public static Date nextFriday(){
-        LocalDate currentDate = LocalDate.now();
-        return new java.util.Date(currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).toString());
-    }
+
+
 
     public static String messageListBestDays(List<DayHourlyDto> dayHourlyList){
         StringBuilder body = new StringBuilder();

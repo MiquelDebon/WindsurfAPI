@@ -1,7 +1,7 @@
-package Weather.model.services;
+package Weather.services;
 
 import Weather.model.entity.Subscriber;
-import Weather.model.repository.SubscriberRepository;
+import Weather.repository.SubscriberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +32,9 @@ public class SubscriberService {
 
     public List<Subscriber> getSubscribers() {
         return subscriberRepository.findAll();
+    }
+
+    public int amountOfSubscribers(){
+        return subscriberRepository.findAll().size();
     }
 }

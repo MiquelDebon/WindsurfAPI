@@ -3,9 +3,10 @@ package Weather.controller;
 import Weather.model.dto.DayHourlyDto;
 import Weather.model.dto.EmailDto;
 import Weather.model.entity.Subscriber;
-import Weather.model.services.EmailService;
-import Weather.model.services.SubscriberService;
-import Weather.model.services.WeatherService;
+import Weather.services.EmailService;
+import Weather.services.SubscriberService;
+import Weather.services.WeatherService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,8 +31,7 @@ public class WeatherController {
         this.subscriberService = subscriberService;
     }
 
-    //localhost:8080/weather/current_week
-
+    //API  ################################################
     @GetMapping("/current_week")
     public ResponseEntity<?> apiGetWeatherCurrentWeek(){
         return ResponseEntity.ok().body(weatherService.bestDaysCurrentWeek());
@@ -41,7 +41,8 @@ public class WeatherController {
         return ResponseEntity.ok().body(weatherService.bestDaysNextDays());
     }
 
-    //Email
+
+    //Email  ################################################
     @GetMapping("/current_week/{email}")
     public ResponseEntity<?> sendEmailCurrentWeek(@PathVariable String email){
         List<DayHourlyDto> currentWeek = weatherService.bestDaysCurrentWeek();
@@ -51,8 +52,9 @@ public class WeatherController {
                 currentWeek);
         return ResponseEntity.ok().body(currentWeek);
     }
+
     @GetMapping("/next_days/{email}")
-    public ResponseEntity<?> sendEmailNext7Days(@PathVariable String email){
+    public ResponseEntity<?> sendEmailNextDays(@PathVariable String email){
         List<DayHourlyDto> next7days = weatherService.bestDaysNextDays();
         emailService.sendEmail(
                 email,
@@ -60,8 +62,9 @@ public class WeatherController {
                 next7days);
         return ResponseEntity.ok().body(next7days);
     }
+
     @PostMapping("/sendEmail")
-    public String sendEmailFromWebSite(@ModelAttribute("email")  EmailDto email, BindingResult result, Model model){
+    public String sendEmailFromWebSite(@ModelAttribute("email") @Valid EmailDto email, BindingResult result, Model model){
         List<DayHourlyDto> next7days = weatherService.bestDaysNextDays();
 
         emailService.sendEmail(
@@ -95,28 +98,25 @@ public class WeatherController {
     }
 
 
-    //HTML rendered page
+
+
+    //Website ################################################
     @GetMapping("/next_days/home")
     public String next7DaysHomePage(Model model) {
-        model.addAttribute("body", "Best following days");
         model.addAttribute("days", weatherService.bestDaysNextDays());
         model.addAttribute("paramValue", "/next_days/home");
-
         return "home";
     }
     @GetMapping("/current_week/home")
     public String currentWeekHomePage(Model model) {
-        model.addAttribute("body", "Best current week days");
         model.addAttribute("paramValue", "/current_week/home");
         model.addAttribute("days", weatherService.bestDaysCurrentWeek());
         return "home";
     }
     @GetMapping("/all_next_days/home")
     public String allnextDaysHomePage(Model model) {
-        model.addAttribute("body", "All following days");
         model.addAttribute("days", weatherService.allNextDays());
         model.addAttribute("paramValue", "/all_next_days/home");
-
         return "home";
     }
 
@@ -135,7 +135,7 @@ public class WeatherController {
         }
     }
 
-    //Email with HTML
+    //Email with HTML ################################################
     @GetMapping("/html")
     public ResponseEntity<?> html(){
         emailService.sendMiquelEmail();

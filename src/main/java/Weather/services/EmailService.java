@@ -1,9 +1,9 @@
-package Weather.model.services;
+package Weather.services;
 
 import Weather.model.dto.DayHourlyDto;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,6 +20,8 @@ import java.util.List;
 public class EmailService {
 
     private JavaMailSender mailSender;
+    @Value("${spring.mail.username}")
+    private static String emailFrom;
 
     @Autowired
     public EmailService(JavaMailSender mailSender) {
@@ -33,7 +35,7 @@ public class EmailService {
         body.append(WeatherService.messageListBestDays(dayHourlyList));
         body.append("\n\nWe hope you the best day!\nBest regards, \nMiquel Debón Villagrasa");
 
-        message.setFrom("mdebonbcn@gmail.com");
+        message.setFrom(emailFrom);
         message.setTo(toEmail);
         message.setSubject(subject);
         message.setText(body.toString());
@@ -42,31 +44,17 @@ public class EmailService {
         System.out.println("Email sent");
     }
 
-    public void sendEmail(String toEmail, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-
-        message.setFrom("mdebonbcn@gmail.com");
-        message.setTo(toEmail);
-        message.setSubject("Best current week days");
-        message.setText(body);
-
-        mailSender.send(message);
-        System.out.println("Email sent");
-    }
-
-    private String cargarContenidoCorreo() throws IOException {
-        File file = new ClassPathResource("templates/email.html").getFile();
-        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-    }
 
 
+
+    //This method sends an email that renders an HTML, I don't use it but good to know
     public void sendMiquelEmail() {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
-            helper.setTo("mdebonbcn@gmail.com");
-            helper.setSubject("mdebonbcn@gmail.com");
+            helper.setTo(emailFrom);
+            helper.setSubject(emailFrom);
 
             String contenidoHtml = cargarContenidoCorreo();
 
@@ -76,6 +64,10 @@ public class EmailService {
         } catch (Exception e) {
             throw new RuntimeException("Error al enviar el correo: " + e.getMessage(), e);
         }
+    }
+    private String cargarContenidoCorreo() throws IOException {
+        File file = new ClassPathResource("templates/email.html").getFile();
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
 
